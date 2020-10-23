@@ -296,8 +296,8 @@ ls -lrt /data/projects/common/supervisord/supervisord.d/fate-*.conf
 ```
 #注意：URL链接有换行，拷贝的时候注意整理成一行
 cd /data/projects/
-wget https://webank-ai-1251170195.cos.ap-guangzhou.myqcloud.com/ansible_nfate_1.5.0_preview-1.0.0.tar.gz
-tar xzf ansible_nfate_1.5.0_preview-1.0.0.tar.gz
+wget https://webank-ai-1251170195.cos.ap-guangzhou.myqcloud.com/ansible_nfate_1.5.0_release-1.0.0.tar.gz
+tar xzf ansible_nfate_1.5.0_release-1.0.0.tar.gz
 ```
 
 ### 4.4 配置文件修改和示例
@@ -383,16 +383,7 @@ ansible_become_pass=   ---各个主机未做免密sudo需填写root密码
 
 ```
 
-**2）修改部署模式**
-
-```
-vi /data/projects/ansible-nfate-1.*/var_files/prod/fate_init
-
-#只修改如下参数，其他参数默认不变
-deploy_mode: "install" ---默认为空，修改为install，表示新部署
-```
-
-**3）修改host方参数**
+**2）修改host方参数**
 
 **注意：默认是不启用安全证书的配置，如果启用安全证书通讯需把server_secure，client_secure，is_secure设置为true，以及is_secure对应的port设置为9371**。
 
@@ -413,6 +404,8 @@ host:
       max_memory:    ---rollsite进程JVM内存参数，默认是物理内存的1/4，可根据实际情况设置,如12G，如果是rollsite专用的机器，配置成物理内存的75%。
       server_secure: False ---作为服务端，开启安全证书验证，不使用安全证书默认即可
       client_secure: False ---作为客户端，使用证书发起安全请求，不使用安全证书默认即可
+      polling: ---是否使用单向模式，本示例不支持，默认false即可
+        enable: False
       default_rules: ---本party指向exchange或者其他party的IP、端口路由配置
       - name: default
         ip: 192.168.0.2 ---exchange或者对端party rollsite IP
@@ -446,6 +439,7 @@ host:
       grpcPort: 9360
       httpPort: 9380
       dbname: "fate_flow"
+      proxy: rollsite ---fate_flow通讯服务的前置代理是rollsite还是nginx，默认即可
     fateboard:
       enable: True
       ips:
@@ -490,6 +484,8 @@ guest:
       max_memory:    ---rollsite进程JVM内存参数，默认是物理内存的1/4，可根据实际情况设置,如12G，如果是rollsite专用的机器，配置成物理内存的75%。
       server_secure: False ---作为服务端，开启安全证书验证，不使用安全证书默认即可
       client_secure: False ---作为客户端，使用证书发起安全请求，不使用安全证书默认即可
+      polling: ---是否使用单向模式，本示例不支持，默认false即可
+        enable: False
       default_rules:  ---本party指向exchange或者其他party的IP、端口路由配置
       - name: default
         ip: 192.168.0.1 ---exchange或者对端party rollsite IP
@@ -523,6 +519,7 @@ guest:
       grpcPort: 9360
       httpPort: 9380
       dbname: "fate_flow"
+      proxy: rollsite  ---fate_flow通讯服务的前置代理是rollsite还是nginx，默认即可
     fateboard:
       enable: True
       ips:  ---只支持部署一台主机
@@ -565,6 +562,9 @@ exchange:
     max_memory:    ---rollsite进程JVM内存参数，默认是物理内存的1/4，可根据实际情况设置,如12G，如果是rollsite专用的机器，配置成物理内存的75%。
     server_secure: False ---作为服务端，开启安全证书验证，不使用安全证书默认即可
     client_secure: False ---作为客户端，使用证书发起安全请求，不使用安全证书默认即可
+    polling:  ---是否使用单向模式，本示例不支持，默认false即可
+      enable: False
+      id: 10000
   partys:  ---指向各party的路由配置
   - id: 10000
     rules:
@@ -674,6 +674,8 @@ python run_toy_example.py 10000 10000 1
 类似如下结果表示成功：
 
 "2020-04-28 18:26:20,789 - secure_add_guest.py[line:126] - INFO: success to calculate secure_sum, it is 1999.9999999999998"
+
+提示：如出现max cores per job is 1, please modify job parameters报错提示，需要修改当前目录下文件toy_example_conf.json中参数eggroll.session.processors.per.node为1.
 
 2）192.168.0.2上执行，guest_partyid和host_partyid都设为9999：
 

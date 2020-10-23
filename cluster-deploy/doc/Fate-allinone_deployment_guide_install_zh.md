@@ -265,8 +265,8 @@ Swap:        131071           0      131071
 
 ```
 cd /data/projects/
-wget https://webank-ai-1251170195.cos.ap-guangzhou.myqcloud.com/fate_cluster_install_1.5.0_preview-c7-u18.tar.gz
-tar xzf fate_cluster_install_1.5.0_preview-c7-u18.tar.gz
+wget https://webank-ai-1251170195.cos.ap-guangzhou.myqcloud.com/fate_cluster_install_1.5.0_release-c7-u18.tar.gz
+tar xzf fate_cluster_install_1.5.0_release-c7-u18.tar.gz
 ```
 
 ## 5.2 部署前检查
@@ -506,6 +506,8 @@ python run_toy_example.py 10000 10000 1
 类似如下结果表示成功：
 
 "2020-04-28 18:26:20,789 - secure_add_guest.py[line:126] - INFO: success to calculate secure_sum, it is 1999.9999999999998"
+
+提示：如出现max cores per job is 1, please modify job parameters报错提示，需要修改当前目录下文件toy_example_conf.json中参数eggroll.session.processors.per.node为1.
 
 2）192.168.0.2上执行，guest_partyid和host_partyid都设为9999：
 
