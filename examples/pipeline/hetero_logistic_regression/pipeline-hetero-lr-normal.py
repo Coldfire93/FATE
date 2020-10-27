@@ -18,7 +18,7 @@ import argparse
 import os
 import sys
 
-sys.path.append(sys.path.append('/home/jovyan/python/fate_client')')
+sys.path.append('/home/jovyan/python/fate_client')
 
 cur_path = os.path.realpath(__file__)
 for i in range(4):
